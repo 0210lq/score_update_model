@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 from pathlib import Path
+inputpath_dic = {}
 def get_top_dir_path(current_path, levels_up=2):
     """
     从当前路径向上退指定层数，获取顶层目录的完整路径。
@@ -72,13 +73,12 @@ def config_path_processing():
     return df_sub
 
 def _init():
-    df=config_path_processing()
     global inputpath_dic
+    df=config_path_processing()
     if df is None or df.empty:
         inputpath_dic = {}
         return inputpath_dic
     df.set_index('data_type',inplace=True,drop=True)
-    global inputpath_dic
     inputpath_dic=df.to_dict()
     inputpath_dic=inputpath_dic.get('path')
     return inputpath_dic
