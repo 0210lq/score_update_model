@@ -1,11 +1,11 @@
 import os
 import pandas as pd
-import global_setting.global_dic as glv
+import src.global_setting.global_dic as glv
 import sys
 path = os.getenv('GLOBAL_TOOLSFUNC_new')
 sys.path.append(path)
 import global_tools as gt
-from setup_logger.logger_setup import setup_logger
+from src.setup_logger.logger_setup import setup_logger
 import io
 import contextlib
 from datetime import datetime

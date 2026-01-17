@@ -26,7 +26,6 @@ def config_path_finding():
                 break
             if str(input)=='config':
                 inputpath_output=os.path.join(inputpath,input)
-                inputpath_output=os.path.dirname(inputpath_output)
                 should_break=True
     return inputpath_output
 def config_path_processing():
@@ -37,9 +36,13 @@ def config_path_processing():
     # 获取顶层目录的名称
     top_dir_name = get_top_dir_path(current_file_path, levels_up=2)
     # 获取输入路径
-    # 提升到项目根目录（从 src/global_setting 退三层）
-    inputpath = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-    inputpath_config = os.path.join(inputpath, 'config_path\data_update_path_config.xlsx')
+    # 项目根目录（从 src/global_setting 退三层）
+    project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+    # 优先查找 config/config_path，其次查找根目录下的 config_path
+    config_dir = config_path_finding() or project_root
+    candidate1 = os.path.join(config_dir, 'config_path', 'data_update_path_config.xlsx')
+    candidate2 = os.path.join(project_root, 'config_path', 'data_update_path_config.xlsx')
+    inputpath_config = candidate1 if os.path.exists(candidate1) else candidate2
     #E:\Optimizer\Data_update\data_update_path_config.xlsx
 
     # 读取Excel文件
@@ -51,7 +54,8 @@ def config_path_processing():
     except FileNotFoundError:
         print(f"配置文件未找到，请检查路径: {inputpath_config}")
         return
-    inputpath_config_sbjzq=config_path_finding()
+    # 配置目录基准（用于 RON=='config' 的路径前缀）
+    inputpath_config_sbjzq = config_dir
     # 合并DataFrame
     df_sub = df_sub.merge(df_main, on='folder_type', how='left')
     # 检查是否有行的MPON和RON都为1
