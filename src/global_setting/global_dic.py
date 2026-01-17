@@ -74,6 +74,20 @@ def config_path_processing():
         lambda x: os.path.join(inputpath_config_sbjzq, x)).tolist()
     # 选择需要的列
     df_sub = df_sub[['data_type', 'path']]
+    def _fallback(p):
+        if os.path.exists(p):
+            return p
+        alt1 = p.replace(os.sep + 'src' + os.sep + 'config_project', os.sep + 'config' + os.sep + 'config_project')
+        if os.path.exists(alt1):
+            return alt1
+        if 'config_project' in p:
+            tail = p.split('config_project' + os.sep, 1)
+            if len(tail) == 2:
+                alt2 = os.path.join(inputpath_config_sbjzq, 'config_project', tail[1])
+                if os.path.exists(alt2):
+                    return alt2
+        return p
+    df_sub['path'] = df_sub['path'].apply(_fallback)
     return df_sub
 
 def _init():
